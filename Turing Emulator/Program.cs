@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Turing_Emulator
 {
@@ -8,6 +9,8 @@ namespace Turing_Emulator
         private static readonly string _secondPath = "code2.txt";
         private static readonly string _thirdPath = "code3.txt";
 
+        private static int _simulationSpeed = 1;
+
         static void Main(string[] args)
         {
             StartupMenu();
@@ -15,9 +18,9 @@ namespace Turing_Emulator
 
         private static void StartupMenu()
         {
-            bool MenuLoop = true;
+            bool menuLoop = true;
 
-            while (MenuLoop) {
+            while (menuLoop) {
                 Console.Clear();
 
                 Console.WriteLine("TURING MACHINE SIMULATOR");
@@ -32,15 +35,51 @@ namespace Turing_Emulator
                 if (item == '1') ChooseFile();
                 else if (item == '2') Simulation();
                 else if (item == '3') OptionsMenu();
-                else if (item == '4') MenuLoop = false;
+                else if (item == '4') menuLoop = false;
                 else continue;
             }
         }
 
         private static void OptionsMenu()
         {
-            Console.WriteLine("Options");
-            Console.ReadKey();
+            bool optionsLoop = true;
+
+            while (optionsLoop)
+            {
+                Console.Clear();
+                Console.WriteLine("OPTIONS");
+                Console.WriteLine("1 - Change simulation speed (" + _simulationSpeed.ToString() + ")");
+                Console.WriteLine("2 - Back");
+
+                char item = Console.ReadKey().KeyChar;
+
+                if (item == '1') ChangeSimultionSpeed();
+                else if (item == '2') optionsLoop = false;
+                else continue;
+            }
+        }
+
+        private static void ChangeSimultionSpeed()
+        {
+            string entry;
+            bool entryLoop = true;
+            int interval = 0;
+            Console.Clear();
+            Console.WriteLine("Enter the simulation step interval [0-10] and press ENTER.\n0 - run at full speed. Maximum interval (10) stands for 1 second.");
+            Console.WriteLine("Current step interval value is " + _simulationSpeed.ToString() + ".");
+
+            while (entryLoop)
+            {
+                entry = Console.ReadLine();
+                bool correctInput = int.TryParse(entry, out interval);
+                if (correctInput && interval >= 0 && interval <= 10)
+                {
+                    _simulationSpeed = interval;
+                    break;
+                }
+                else Console.WriteLine("Please enter a whole number 0-10.");
+            }
+            
         }
 
         private static void Simulation()
