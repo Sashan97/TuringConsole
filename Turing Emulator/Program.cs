@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Turing_Emulator
@@ -10,6 +11,8 @@ namespace Turing_Emulator
         private static readonly string _thirdPath = "code3.txt";
 
         private static int _simulationSpeed = 1;
+
+        private static List<EntryLine> _lines = new List<EntryLine>();
 
         static void Main(string[] args)
         {
@@ -63,7 +66,6 @@ namespace Turing_Emulator
         {
             string entry;
             bool entryLoop = true;
-            int interval = 0;
             Console.Clear();
             Console.WriteLine("Enter the simulation step interval [0-10] and press ENTER.\n0 - run at full speed. Maximum interval (10) stands for 1 second.");
             Console.WriteLine("Current step interval value is " + _simulationSpeed.ToString() + ".");
@@ -71,7 +73,7 @@ namespace Turing_Emulator
             while (entryLoop)
             {
                 entry = Console.ReadLine();
-                bool correctInput = int.TryParse(entry, out interval);
+                bool correctInput = int.TryParse(entry, out int interval);
                 if (correctInput && interval >= 0 && interval <= 10)
                 {
                     _simulationSpeed = interval;
@@ -82,10 +84,16 @@ namespace Turing_Emulator
             
         }
 
+        struct EntryLine
+        {
+            internal bool direction;
+            internal string state, newState;
+            internal char symbol, newSymbol;
+        }
+
         private static void Simulation()
         {
-            Console.WriteLine("Sumulation");
-            Console.ReadKey();
+            
         }
 
         private static void ChooseFile()
