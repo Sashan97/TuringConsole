@@ -4,6 +4,10 @@ namespace Turing_Emulator
 {
     class Program
     {
+        private static readonly string _firstPath = "code1.txt";
+        private static readonly string _secondPath = "code2.txt";
+        private static readonly string _thirdPath = "code3.txt";
+
         static void Main(string[] args)
         {
             StartupMenu();
@@ -47,7 +51,12 @@ namespace Turing_Emulator
 
         private static void ChooseFile()
         {
-            Console.WriteLine("Choose file");
+            Console.Clear();
+            Console.WriteLine("Currently you cannot change the default file locations and names, which are:");
+            Console.WriteLine(_firstPath);
+            Console.WriteLine(_secondPath);
+            Console.WriteLine(_thirdPath);
+            Console.WriteLine("Press any key to return.");
             Console.ReadKey();
         }
     }
