@@ -1,0 +1,13 @@
+D:\Projects\TuringConsole\TuringConsole\Turing Emulator\bin\Debug\netcoreapp3.1\Turing Emulator.exe
+D:\Projects\TuringConsole\TuringConsole\Turing Emulator\bin\Debug\netcoreapp3.1\Turing Emulator.deps.json
+D:\Projects\TuringConsole\TuringConsole\Turing Emulator\bin\Debug\netcoreapp3.1\Turing Emulator.runtimeconfig.json
+D:\Projects\TuringConsole\TuringConsole\Turing Emulator\bin\Debug\netcoreapp3.1\Turing Emulator.runtimeconfig.dev.json
+D:\Projects\TuringConsole\TuringConsole\Turing Emulator\bin\Debug\netcoreapp3.1\Turing Emulator.dll
+D:\Projects\TuringConsole\TuringConsole\Turing Emulator\bin\Debug\netcoreapp3.1\Turing Emulator.pdb
+D:\Projects\TuringConsole\TuringConsole\Turing Emulator\obj\Debug\netcoreapp3.1\Turing Emulator.csprojAssemblyReference.cache
+D:\Projects\TuringConsole\TuringConsole\Turing Emulator\obj\Debug\netcoreapp3.1\Turing Emulator.AssemblyInfoInputs.cache
+D:\Projects\TuringConsole\TuringConsole\Turing Emulator\obj\Debug\netcoreapp3.1\Turing Emulator.AssemblyInfo.cs
+D:\Projects\TuringConsole\TuringConsole\Turing Emulator\obj\Debug\netcoreapp3.1\Turing Emulator.csproj.CoreCompileInputs.cache
+D:\Projects\TuringConsole\TuringConsole\Turing Emulator\obj\Debug\netcoreapp3.1\Turing Emulator.dll
+D:\Projects\TuringConsole\TuringConsole\Turing Emulator\obj\Debug\netcoreapp3.1\Turing Emulator.pdb
+D:\Projects\TuringConsole\TuringConsole\Turing Emulator\obj\Debug\netcoreapp3.1\Turing Emulator.genruntimeconfig.cache
