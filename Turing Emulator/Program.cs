@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace Turing_Emulator
@@ -118,7 +119,9 @@ namespace Turing_Emulator
             ReadFile();
 
             Console.WriteLine(_initialTape);
-            Console.WriteLine(_initialPosition);
+
+            for (int i = 0; i < _initialPosition - 1; i++) Console.Write(' ');
+            Console.WriteLine('O');
 
             foreach (CodeLine item in _codeList)
                 Console.WriteLine(item.state + " "  + item.symbol + " " + item.newSymbol + " " + item.direction.ToString() + " " + item.newState);
