@@ -1,17 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace Turing_Emulator
 {
     class Program
     {
-        private static readonly string _firstPath = "code1.txt";
-        private static readonly string _secondPath = "code2.txt";
-        private static readonly string _thirdPath = "code3.txt";
+        struct CodeLine
+        {
+            internal string state, newState;
+            internal char symbol, newSymbol;
+            internal byte direction;
+        }
+
+        private const string FILENAME = @"C:\Users\sasho\Documents\TextTestLocation\TextFile1.txt";
+
+        private const int INITIAL_TAPE_LINE = 1;
+        private const int INITIAL_POSITION_LINE = 2;
+        private const int EXPECTED_ARGUMENT_COUNT = 5;
+
+        private static string _initialTape;
+        private static int _initialPosition;
+
+        //private static readonly string _firstPath = "code1.txt";
+        //private static readonly string _secondPath = "code2.txt";
+        //private static readonly string _thirdPath = "code3.txt";
 
         private static int _simulationSpeed = 1;
 
-        static void Main(string[] args)
+        private static List<CodeLine> _codeList = new List<CodeLine>();
+
+        static void Main()
         {
             StartupMenu();
         }
@@ -58,12 +78,22 @@ namespace Turing_Emulator
                 else continue;
             }
         }
+        
+        private static void ChooseFile()
+        {
+            Console.Clear();
+            Console.WriteLine("Currently you cannot change the default file locations and names, which are:");
+            //Console.WriteLine(_firstPath);
+            //Console.WriteLine(_secondPath);
+            //Console.WriteLine(_thirdPath);
+            Console.WriteLine("Press any key to return.");
+            Console.ReadKey();
+        }
 
         private static void ChangeSimultionSpeed()
         {
             string entry;
             bool entryLoop = true;
-            int interval = 0;
             Console.Clear();
             Console.WriteLine("Enter the simulation step interval [0-10] and press ENTER.\n0 - run at full speed. Maximum interval (10) stands for 1 second.");
             Console.WriteLine("Current step interval value is " + _simulationSpeed.ToString() + ".");
@@ -71,7 +101,7 @@ namespace Turing_Emulator
             while (entryLoop)
             {
                 entry = Console.ReadLine();
-                bool correctInput = int.TryParse(entry, out interval);
+                bool correctInput = int.TryParse(entry, out int interval);
                 if (correctInput && interval >= 0 && interval <= 10)
                 {
                     _simulationSpeed = interval;
@@ -82,21 +112,98 @@ namespace Turing_Emulator
             
         }
 
+
         private static void Simulation()
         {
-            Console.WriteLine("Sumulation");
+            Console.Clear();
+            ReadFile();
+
+            Console.WriteLine(_initialTape);
+
+            for (int i = 0; i < _initialPosition - 1; i++) Console.Write(' ');
+            Console.WriteLine('O');
+
+            foreach (CodeLine item in _codeList)
+                Console.WriteLine(item.state + " "  + item.symbol + " " + item.newSymbol + " " + item.direction.ToString() + " " + item.newState);
+
             Console.ReadKey();
         }
 
-        private static void ChooseFile()
+        private static void ReadFile()
         {
-            Console.Clear();
-            Console.WriteLine("Currently you cannot change the default file locations and names, which are:");
-            Console.WriteLine(_firstPath);
-            Console.WriteLine(_secondPath);
-            Console.WriteLine(_thirdPath);
-            Console.WriteLine("Press any key to return.");
-            Console.ReadKey();
+            // Reading all lines as raw string collection
+            IEnumerable<string> lines = System.IO.File.ReadLines(FILENAME);
+            int lineNumber = 0;
+
+            // Processing each line
+            foreach (string line in lines)
+            {
+                // Bypassing the empty lines
+                if (String.IsNullOrEmpty(line)) continue;
+
+                lineNumber++;
+
+                // Reading initial tape data and head position on emulation start
+                if (lineNumber == INITIAL_TAPE_LINE) _initialTape = line;
+                else if (lineNumber == INITIAL_POSITION_LINE) _initialPosition = int.Parse(line);
+                else
+                {
+                    // Splitting the line into arguments and checking if line is valid
+                    string[] words = line.Split(" ");
+
+                    if (words.Length != EXPECTED_ARGUMENT_COUNT)
+                    {
+                        Console.WriteLine("Syntax error at line " + lineNumber + ". Invalid argument number.");
+                        break;
+                    }
+
+                    // Trying to parse arguments, simulation is halted immediately if syntax error has occured
+                    CodeLine instruction;
+
+                    // State
+                    instruction.state = words[0];
+
+                    // Symbol
+                    if (char.TryParse(words[1], out char sym)) instruction.symbol = sym;
+                    else
+                    {
+                        Console.WriteLine("Syntax error at line " + lineNumber + ". Symbol is unsupported or provided incorrecty.");
+                        break;
+                    }
+
+                    // New symbol
+                    if (char.TryParse(words[2], out char newSym)) instruction.newSymbol = newSym;
+                    else
+                    {
+                        Console.WriteLine("Syntax error at line " + lineNumber + ". New symbol is unsupported or provided incorrecty.");
+                        break;
+                    }
+
+                    // Direction, either L or R being read from the file, but stored in struct as short
+                    if (char.TryParse(words[3], out char dir))
+                    {
+                        if (dir == 'L') instruction.direction = 0;
+                        else if (dir == 'R') instruction.direction = 1;
+                        else
+                        {
+                            Console.WriteLine("Syntax error at line " + lineNumber + ". Direction can be either L or R.");
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Syntax error at line " + lineNumber + ". Direction can be either L or R.");
+                        break;
+                    }
+
+                    //  New state
+                    instruction.newState = words[4];
+
+                    // Putting the struct to the collection
+                    _codeList.Add(instruction);
+                }
+            }
         }
+
     }
 }
