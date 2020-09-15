@@ -107,7 +107,7 @@ namespace Turing_Emulator
                 bool correctInput = int.TryParse(entry, out int interval);
                 if (correctInput && interval >= 0 && interval <= 10)
                 {
-                    _simulationSpeed = interval;
+                    _simulationSpeed = interval * 10;
                     break;
                 }
                 else Console.WriteLine("Please enter a whole number 0-10.");
@@ -122,49 +122,60 @@ namespace Turing_Emulator
             Console.CursorVisible = false;
             ReadFile();
 
-            string currentState = INITIAL_STATE;
-            char[] currentTape = _initialTape.ToCharArray();
-            int currentPosition = _initialPosition - 1;
-            bool instructionFoundFlag;
-
-            Console.WriteLine(currentTape);
-
-            while (true)
+            if (ReadFile())
             {
-                Console.SetCursorPosition(0, 1);
-                for (int i = 0; i < currentPosition; i++) Console.Write(' ');
-                Console.WriteLine("^ ");
+                string currentState = INITIAL_STATE;
+                char[] currentTape = _initialTape.ToCharArray();
+                int currentPosition = _initialPosition - 1;
+                bool instructionFoundFlag;
 
-                instructionFoundFlag = false;
+                Console.WriteLine(currentTape);
 
-                foreach (CodeLine instruction in _codeList)
+                while (true)
                 {
-                    if (instruction.state == currentState && instruction.symbol == currentTape[currentPosition])
+                    Console.SetCursorPosition(0, 1);
+                    for (int i = 0; i < currentPosition; i++) Console.Write(' ');
+                    Console.WriteLine("^ ");
+
+                    instructionFoundFlag = false;
+
+                    foreach (CodeLine instruction in _codeList)
                     {
-                        instructionFoundFlag = true;
-                        currentTape[currentPosition] = instruction.newSymbol;
-                        if (instruction.direction == 0) currentPosition--;
-                        else currentPosition++;
-                        currentState = instruction.newState;
+                        if (instruction.state == currentState && instruction.symbol == currentTape[currentPosition])
+                        {
+                            instructionFoundFlag = true;
+                            currentTape[currentPosition] = instruction.newSymbol;
+                            if (instruction.direction == 0) currentPosition--;
+                            else currentPosition++;
+                            currentState = instruction.newState;
+                            break;
+                        }
+                    }
+
+                    if (!instructionFoundFlag)
+                    {
+                        Console.WriteLine("No instruction found for state " + currentPosition + " and symbol " + currentTape[currentPosition] + ". Simulation halted.");
                         break;
                     }
-                }
+                    else
+                    {
+                        Console.SetCursorPosition(0, 0);
+                        Console.WriteLine(currentTape);
+                    }
+                    //foreach (CodeLine item in _codeList)
+                    //    Console.WriteLine(item.state + " "  + item.symbol + " " + item.newSymbol + " " + item.direction.ToString() + " " + item.newState);
 
-                if (!instructionFoundFlag) Console.WriteLine("No instruction found for state " + currentPosition + " and symbol " + currentTape[currentPosition] + ". Simulation halted.");
-                else
-                {
-                    Console.SetCursorPosition(0, 0);
-                    Console.WriteLine(currentTape);
-                }
-                //foreach (CodeLine item in _codeList)
-                //    Console.WriteLine(item.state + " "  + item.symbol + " " + item.newSymbol + " " + item.direction.ToString() + " " + item.newState);
+                    if (_simulationSpeed == 0) Console.ReadKey();
+                    else Thread.Sleep(TimeSpan.FromMilliseconds(_simulationSpeed));
 
-                Thread.Sleep(TimeSpan.FromMilliseconds(50));
+                }
             }
-            
+
+            Console.WriteLine("Press any key to return to main menu.");
+            Console.ReadKey();
         }
 
-        private static void ReadFile()
+        private static bool ReadFile()
         {
             // Reading all lines as raw string collection
             IEnumerable<string> lines = System.IO.File.ReadLines(FILENAME);
@@ -189,7 +200,7 @@ namespace Turing_Emulator
                     if (words.Length != EXPECTED_ARGUMENT_COUNT)
                     {
                         Console.WriteLine("Syntax error at line " + lineNumber + ". Invalid argument number.");
-                        break;
+                        return false;
                     }
 
                     // Trying to parse arguments, simulation is halted immediately if syntax error has occured
@@ -203,7 +214,7 @@ namespace Turing_Emulator
                     else
                     {
                         Console.WriteLine("Syntax error at line " + lineNumber + ". Symbol is unsupported or provided incorrecty.");
-                        break;
+                        return false;
                     }
 
                     // New symbol
@@ -211,7 +222,7 @@ namespace Turing_Emulator
                     else
                     {
                         Console.WriteLine("Syntax error at line " + lineNumber + ". New symbol is unsupported or provided incorrecty.");
-                        break;
+                        return false;
                     }
 
                     // Direction, either L or R being read from the file, but stored in struct as short
@@ -222,13 +233,13 @@ namespace Turing_Emulator
                         else
                         {
                             Console.WriteLine("Syntax error at line " + lineNumber + ". Direction can be either L or R.");
-                            break;
+                            return false;
                         }
                     }
                     else
                     {
                         Console.WriteLine("Syntax error at line " + lineNumber + ". Direction can be either L or R.");
-                        break;
+                        return false;
                     }
 
                     //  New state
@@ -238,7 +249,7 @@ namespace Turing_Emulator
                     _codeList.Add(instruction);
                 }
             }
+            return true;
         }
-
     }
 }
