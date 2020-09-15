@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Turing_Emulator
 {
@@ -18,6 +19,7 @@ namespace Turing_Emulator
 
         private const int INITIAL_TAPE_LINE = 1;
         private const int INITIAL_POSITION_LINE = 2;
+        private const string INITIAL_STATE = "0";
         private const int EXPECTED_ARGUMENT_COUNT = 5;
 
         private static string _initialTape;
@@ -118,15 +120,42 @@ namespace Turing_Emulator
             Console.Clear();
             ReadFile();
 
-            Console.WriteLine(_initialTape);
+            string currentState = INITIAL_STATE;
+            char[] currentTape = _initialTape.ToCharArray();
+            int currentPosition = _initialPosition - 1;
+            bool instructionFoundFlag;
 
-            for (int i = 0; i < _initialPosition - 1; i++) Console.Write(' ');
-            Console.WriteLine('O');
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("Current state - " + currentState);
+                Console.WriteLine("Current position - " + currentPosition);
+                Console.WriteLine(currentTape);
+                for (int i = 0; i < currentPosition; i++) Console.Write(' ');
+                Console.WriteLine('O');
 
-            foreach (CodeLine item in _codeList)
-                Console.WriteLine(item.state + " "  + item.symbol + " " + item.newSymbol + " " + item.direction.ToString() + " " + item.newState);
+                instructionFoundFlag = false;
 
-            Console.ReadKey();
+                foreach (CodeLine instruction in _codeList)
+                {
+                    if (instruction.state == currentState && instruction.symbol == currentTape[currentPosition])
+                    {
+                        instructionFoundFlag = true;
+                        currentTape[currentPosition] = instruction.newSymbol;
+                        if (instruction.direction == 0) currentPosition--;
+                        else currentPosition++;
+                        currentState = instruction.newState;
+                        break;
+                    }
+                }
+
+                if (!instructionFoundFlag) Console.WriteLine("No instruction found for state " + currentPosition + " and symbol " + currentTape[currentPosition] + ". Simulation halted.");
+                //foreach (CodeLine item in _codeList)
+                //    Console.WriteLine(item.state + " "  + item.symbol + " " + item.newSymbol + " " + item.direction.ToString() + " " + item.newState);
+
+                Console.ReadKey();
+            }
+            
         }
 
         private static void ReadFile()
