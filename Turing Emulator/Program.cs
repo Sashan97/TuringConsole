@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Turing_Emulator
 {
@@ -118,6 +119,7 @@ namespace Turing_Emulator
         private static void Simulation()
         {
             Console.Clear();
+            Console.CursorVisible = false;
             ReadFile();
 
             string currentState = INITIAL_STATE;
@@ -125,14 +127,13 @@ namespace Turing_Emulator
             int currentPosition = _initialPosition - 1;
             bool instructionFoundFlag;
 
+            Console.WriteLine(currentTape);
+
             while (true)
             {
-                Console.Clear();
-                Console.WriteLine("Current state - " + currentState);
-                Console.WriteLine("Current position - " + currentPosition);
-                Console.WriteLine(currentTape);
+                Console.SetCursorPosition(0, 1);
                 for (int i = 0; i < currentPosition; i++) Console.Write(' ');
-                Console.WriteLine('O');
+                Console.WriteLine("^ ");
 
                 instructionFoundFlag = false;
 
@@ -150,10 +151,15 @@ namespace Turing_Emulator
                 }
 
                 if (!instructionFoundFlag) Console.WriteLine("No instruction found for state " + currentPosition + " and symbol " + currentTape[currentPosition] + ". Simulation halted.");
+                else
+                {
+                    Console.SetCursorPosition(0, 0);
+                    Console.WriteLine(currentTape);
+                }
                 //foreach (CodeLine item in _codeList)
                 //    Console.WriteLine(item.state + " "  + item.symbol + " " + item.newSymbol + " " + item.direction.ToString() + " " + item.newState);
 
-                Console.ReadKey();
+                Thread.Sleep(TimeSpan.FromMilliseconds(50));
             }
             
         }
