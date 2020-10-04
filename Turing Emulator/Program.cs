@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -16,7 +17,7 @@ namespace Turing_Emulator
             internal byte direction;
         }
 
-        private const string FILENAME = @"C:\Users\sasho\Documents\TextTestLocation\TextFile1.txt";
+        private const string FILENAME = @"C:\Users\sasho\Documents\TextTestLocation\TextFile6.txt";
 
         private const int INITIAL_TAPE_LINE = 1;
         private const int INITIAL_POSITION_LINE = 2;
@@ -120,7 +121,6 @@ namespace Turing_Emulator
         {
             Console.Clear();
             Console.CursorVisible = false;
-            ReadFile();
 
             if (ReadFile())
             {
@@ -195,6 +195,12 @@ namespace Turing_Emulator
 
         private static bool ReadFile()
         {
+            if (!File.Exists(FILENAME))
+            {
+                Console.WriteLine("Failed to read, file does not exist.");
+                return false;
+            }
+
             // Reading all lines as raw string collection
             IEnumerable<string> lines = System.IO.File.ReadLines(FILENAME);
             int lineNumber = 0;
