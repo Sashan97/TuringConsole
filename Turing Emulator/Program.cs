@@ -127,11 +127,11 @@ namespace Turing_Emulator
                 string currentState = INITIAL_STATE;
                 char[] currentTape = _initialTape.ToCharArray();
                 int currentPosition = _initialPosition - 1;
-                bool instructionFoundFlag;
+                bool instructionFoundFlag, headError = false;
 
                 Console.WriteLine(currentTape);
 
-                while (true)
+                while (!headError)
                 {
                     Console.SetCursorPosition(0, 1);
                     for (int i = 0; i < currentPosition; i++) Console.Write(' ');
@@ -145,8 +145,26 @@ namespace Turing_Emulator
                         {
                             instructionFoundFlag = true;
                             currentTape[currentPosition] = instruction.newSymbol;
-                            if (instruction.direction == 0) currentPosition--;
-                            else currentPosition++;
+                            if (instruction.direction == 0)
+                            {
+                                if (currentPosition == 0)
+                                {
+                                    Console.WriteLine("Head position exceeds tape bounds. Simulation halted.");
+                                    headError = true;
+                                    break;
+                                }
+                                else currentPosition--;
+                            }
+                            else
+                            {
+                                if (currentPosition == currentTape.Length - 1)
+                                {
+                                    Console.WriteLine("Head position exceeds tape bounds. Simulation halted.");
+                                    headError = true;
+                                    break;
+                                }
+                                else currentPosition++;
+                            }
                             currentState = instruction.newState;
                             break;
                         }
