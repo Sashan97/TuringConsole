@@ -17,7 +17,7 @@ namespace Turing_Emulator
             internal byte direction;
         }
 
-        private const string FILENAME = @"C:\Users\sasho\Documents\TextTestLocation\TextFile6.txt";
+        private const string FILENAME = @"C:\Users\sasho\Documents\TextTestLocation\TextFile1.txt";
 
         private const int INITIAL_TAPE_LINE = 1;
         private const int INITIAL_POSITION_LINE = 2;
@@ -32,6 +32,8 @@ namespace Turing_Emulator
         //private static readonly string _thirdPath = "code3.txt";
 
         private static int _simulationSpeed = 1;
+
+        private static bool isRunning;
 
         private static List<CodeLine> _codeList = new List<CodeLine>();
 
@@ -57,7 +59,19 @@ namespace Turing_Emulator
                 char item = Console.ReadKey().KeyChar;
 
                 if (item == '1') ChooseFile();
-                else if (item == '2') Simulation();
+                else if (item == '2')
+                {
+                    Console.Clear();
+                    menuLoop = false;
+                    isRunning = true;
+                    Thread t1 = new Thread(Simulation);
+                    t1.Start();
+                    if (Console.ReadKey().Key == ConsoleKey.Escape)
+                    {
+                        isRunning = false;
+                        menuLoop = true;
+                    }
+                }
                 else if (item == '3') OptionsMenu();
                 else if (item == '4') menuLoop = false;
                 else continue;
@@ -119,7 +133,6 @@ namespace Turing_Emulator
 
         private static void Simulation()
         {
-            Console.Clear();
             Console.CursorVisible = false;
 
             if (ReadFile())
@@ -130,8 +143,9 @@ namespace Turing_Emulator
                 bool instructionFoundFlag, headError = false;
 
                 Console.WriteLine(currentTape);
-
-                while (!headError)
+                Console.SetCursorPosition(0, 4);
+                Console.WriteLine("ESC - Abort");
+                while (!headError && isRunning)
                 {
                     Console.SetCursorPosition(0, 1);
                     for (int i = 0; i < currentPosition; i++) Console.Write(' ');
@@ -189,8 +203,11 @@ namespace Turing_Emulator
                 }
             }
 
-            Console.WriteLine("Press any key to return to main menu.");
-            Console.ReadKey();
+            if(isRunning != false)
+            {
+                Console.WriteLine("Press any key to return to main menu.");
+                Console.ReadKey();
+            }
         }
 
         private static bool ReadFile()
