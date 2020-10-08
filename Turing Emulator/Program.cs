@@ -43,6 +43,7 @@ namespace Turing_Emulator
 
         private static bool isRunning;
         private static bool menuLoop;
+        private static short mode;
 
         private static List<CodeLine> codeList1 = new List<CodeLine>();
         private static List<CodeLine> codeList2 = new List<CodeLine>();
@@ -73,14 +74,97 @@ namespace Turing_Emulator
                 char item = Console.ReadKey().KeyChar;
 
                 if (item == '1') ChooseFile();
+                else if (item == '2') StartSimulationMenu();
+                else if (item == '3') OptionsMenu();
+                else if (item == '4') menuLoop = false;
+                else continue;
+            }
+        }
+
+        private static void StartSimulationMenu()
+        {
+            bool startLoop = true;
+
+            while (startLoop)
+            {
+
+                Console.Clear();
+
+                Console.WriteLine("1 - First file");
+                Console.WriteLine("2 - Second file");
+                Console.WriteLine("3 - Third file");
+                Console.WriteLine("4 - Fourth file");
+                Console.WriteLine("5 - All files simultaneously");
+                Console.WriteLine("6 - Back");
+                Console.WriteLine("Take your pick [1-6]: ");
+
+                char item = Console.ReadKey().KeyChar;
+
+                if (item == '1')
+                {
+                    InitializeMachine();
+
+                    mode = 1;
+                    ReadFile(firstPath, 0);
+
+                    Thread t1 = new Thread(() => Simulation(0));
+
+                    t1.Start();
+                    t1.Join();
+
+                    startLoop = false;
+                    ClearAll();
+                }
                 else if (item == '2')
                 {
-                    Console.Clear();
-                    Console.SetCursorPosition(0, 16);
-                    Console.WriteLine("Press SPACE to abort and return to main menu");
-                    menuLoop = false;
-                    isRunning = true;
+                    InitializeMachine();
 
+                    mode = 1;
+                    ReadFile(secondPath, 0);
+
+                    Thread t1 = new Thread(() => Simulation(0));
+
+                    t1.Start();
+                    t1.Join();
+
+                    startLoop = false;
+                    ClearAll();
+                }
+                else if (item == '3')
+                {
+                    InitializeMachine();
+
+                    mode = 1;
+                    ReadFile(thirdPath, 0);
+
+                    Thread t1 = new Thread(() => Simulation(0));
+
+                    t1.Start();
+                    t1.Join();
+
+                    startLoop = false;
+                    ClearAll();
+                }
+                else if (item == '4')
+                {
+                    InitializeMachine();
+
+                    mode = 1;
+                    ReadFile(fourthPath, 0);
+
+                    Thread t1 = new Thread(() => Simulation(0));
+
+                    t1.Start();
+                    t1.Join();
+
+                    startLoop = false;
+                    ClearAll();
+                }
+                else if (item == '5')
+                {
+                    InitializeMachine();
+
+                    mode = 2;
                     ReadFile(firstPath, 0);
                     ReadFile(secondPath, 1);
                     ReadFile(thirdPath, 2);
@@ -101,11 +185,28 @@ namespace Turing_Emulator
                     t3.Join();
                     t4.Join();
 
+                    startLoop = false;
+                    ClearAll();
                 }
-                else if (item == '3') OptionsMenu();
-                else if (item == '4') menuLoop = false;
-                else continue;
+                else if (item == '6') startLoop = false;
             }
+        }
+
+        private static void ClearAll()
+        {
+            codeList1.Clear();
+            codeList2.Clear();
+            codeList3.Clear();
+            codeList4.Clear();
+        }
+
+        private static void InitializeMachine()
+        {
+            Console.Clear();
+            Console.SetCursorPosition(0, 16);
+            Console.WriteLine("Press SPACE to abort and return to main menu");
+            menuLoop = false;
+            isRunning = true;
         }
 
         private static void OptionsMenu()
@@ -248,6 +349,7 @@ namespace Turing_Emulator
                 {
                     Console.WriteLine("No instruction found for state " + currentPosition + " and symbol " + currentTape[currentPosition] + ". Simulation halted.");
                     test.ReleaseMutex();
+                    if (mode == 1) Console.ReadKey();
                     break;
                 }
                 else
