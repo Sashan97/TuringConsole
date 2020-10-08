@@ -477,7 +477,7 @@ namespace Turing_Emulator
                     // Splitting the line into arguments and checking if line is valid
                     string[] words = line.Split(" ");
 
-                    if (words.Length != EXPECTED_ARGUMENT_COUNT)
+                    if (words.Length < EXPECTED_ARGUMENT_COUNT)
                     {
                         Console.WriteLine("Syntax error at line " + lineNumber + ". Invalid argument number.");
                         return false;
