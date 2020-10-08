@@ -358,19 +358,11 @@ namespace Turing_Emulator
                     Console.WriteLine(currentTape);
                 }
 
-                if (simulationSpeed == 0) Console.ReadKey();
-                else Thread.Sleep(TimeSpan.FromMilliseconds(simulationSpeed));
+                if (simulationSpeed > 0) Thread.Sleep(TimeSpan.FromMilliseconds(simulationSpeed));
 
                 test.ReleaseMutex();
 
             }
-
-            /*if(isRunning != false)
-            {
-                Console.WriteLine("Press any key to return to main menu.");
-                Console.ReadKey();
-            }*/
-
             menuLoop = true;
         }
 
