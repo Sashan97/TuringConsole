@@ -17,8 +17,6 @@ namespace Turing_Emulator
             internal byte direction;
         }
 
-        private const string FILENAME = @"C:\Users\sasho\Documents\TextTestLocation\TextFile1.txt";
-
         private const int INITIAL_TAPE_LINE = 1;
         private const int INITIAL_POSITION_LINE = 2;
         private const string INITIAL_STATE = "0";
@@ -34,15 +32,16 @@ namespace Turing_Emulator
         private static int initialPosition3;
         private static int initialPosition4;
 
-        private static readonly string firstPath = @"C:\Users\sasho\Documents\TextTestLocation\code1.txt";
-        private static readonly string secondPath = @"C:\Users\sasho\Documents\TextTestLocation\code2.txt";
-        private static readonly string thirdPath = @"C:\Users\sasho\Documents\TextTestLocation\code3.txt";
-        private static readonly string fourthPath = @"C:\Users\sasho\Documents\TextTestLocation\code4.txt";
+        private static string firstPath = @"C:\Users\sasho\Documents\TextTestLocation\code1.txt";
+        private static string secondPath = @"C:\Users\sasho\Documents\TextTestLocation\code2.txt";
+        private static string thirdPath = @"C:\Users\sasho\Documents\TextTestLocation\code3.txt";
+        private static string fourthPath = @"C:\Users\sasho\Documents\TextTestLocation\code4.txt";
 
         private static int simulationSpeed = 1;
 
         private static bool isRunning;
         private static bool menuLoop;
+        private static short mode;
 
         private static List<CodeLine> codeList1 = new List<CodeLine>();
         private static List<CodeLine> codeList2 = new List<CodeLine>();
@@ -73,39 +72,168 @@ namespace Turing_Emulator
                 char item = Console.ReadKey().KeyChar;
 
                 if (item == '1') ChooseFile();
+                else if (item == '2') StartSimulationMenu();
+                else if (item == '3') OptionsMenu();
+                else if (item == '4') menuLoop = false;
+                else continue;
+            }
+        }
+
+        private static void StartSimulationMenu()
+        {
+            bool startLoop = true;
+
+            while (startLoop)
+            {
+
+                Console.Clear();
+
+                Console.WriteLine("1 - First file");
+                Console.WriteLine("2 - Second file");
+                Console.WriteLine("3 - Third file");
+                Console.WriteLine("4 - Fourth file");
+                Console.WriteLine("5 - All files simultaneously");
+                Console.WriteLine("6 - Back");
+                Console.WriteLine("Take your pick [1-6]: ");
+
+                char item = Console.ReadKey().KeyChar;
+
+                if (item == '1')
+                {
+                    InitializeMachine();
+                    mode = 1;
+
+                    if (ReadFile(firstPath, 0))
+                    {
+                        Thread t1 = new Thread(() => Simulation(0));
+                        t1.Start();
+                        t1.Join();
+                    }
+                    else
+                    {
+                        Console.ReadKey();
+                        menuLoop = true;
+                    }
+
+                    startLoop = false;
+                    ClearAll();
+                }
                 else if (item == '2')
                 {
-                    Console.Clear();
-                    Console.SetCursorPosition(0, 16);
-                    Console.WriteLine("Press SPACE to abort and return to main menu");
-                    menuLoop = false;
-                    isRunning = true;
+                    InitializeMachine();
 
+                    mode = 1;
+                    if (ReadFile(secondPath, 0))
+                    {
+                        Thread t1 = new Thread(() => Simulation(0));
+                        t1.Start();
+                        t1.Join();
+                    }
+                    else
+                    {
+                        Console.ReadKey();
+                        menuLoop = true;
+                    }
+
+                    startLoop = false;
+                    ClearAll();
+                }
+                else if (item == '3')
+                {
+                    InitializeMachine();
+
+                    mode = 1;
+                    if (ReadFile(thirdPath, 0))
+                    {
+                        Thread t1 = new Thread(() => Simulation(0));
+                        t1.Start();
+                        t1.Join();
+                    }
+                    else
+                    {
+                        Console.ReadKey();
+                        menuLoop = true;
+                    }
+
+                    startLoop = false;
+                    ClearAll();
+                }
+                else if (item == '4')
+                {
+                    InitializeMachine();
+
+                    mode = 1;
+                    if (ReadFile(fourthPath, 0))
+                    {
+                        Thread t1 = new Thread(() => Simulation(0));
+                        t1.Start();
+                        t1.Join();
+                    }
+                    else
+                    {
+                        Console.ReadKey();
+                        menuLoop = true;
+                    }
+
+                    startLoop = false;
+                    ClearAll();
+                }
+                else if (item == '5')
+                {
+                    InitializeMachine();
+
+                    mode = 2;
                     ReadFile(firstPath, 0);
                     ReadFile(secondPath, 1);
                     ReadFile(thirdPath, 2);
                     ReadFile(fourthPath, 3);
 
-                    Thread t1 = new Thread(() => Simulation(0));
-                    Thread t2 = new Thread(() => Simulation(1));
-                    Thread t3 = new Thread(() => Simulation(2));
-                    Thread t4 = new Thread(() => Simulation(3));
+                    if(ReadFile(firstPath, 0) && ReadFile(secondPath, 1) && ReadFile(thirdPath, 2) && ReadFile(fourthPath, 3))
+                    {
 
-                    t1.Start();
-                    t2.Start();
-                    t3.Start();
-                    t4.Start();
+                        Thread t1 = new Thread(() => Simulation(0));
+                        Thread t2 = new Thread(() => Simulation(1));
+                        Thread t3 = new Thread(() => Simulation(2));
+                        Thread t4 = new Thread(() => Simulation(3));
 
-                    t1.Join();
-                    t2.Join();
-                    t3.Join();
-                    t4.Join();
+                        t1.Start();
+                        t2.Start();
+                        t3.Start();
+                        t4.Start();
 
+                        t1.Join();
+                        t2.Join();
+                        t3.Join();
+                        t4.Join();
+                    }
+                    else
+                    {
+                        Console.ReadKey();
+                        menuLoop = true;
+                    }
+
+                    startLoop = false;
+                    ClearAll();
                 }
-                else if (item == '3') OptionsMenu();
-                else if (item == '4') menuLoop = false;
-                else continue;
+                else if (item == '6') startLoop = false;
             }
+        }
+
+        private static void ClearAll()
+        {
+            codeList1.Clear();
+            codeList2.Clear();
+            codeList3.Clear();
+            codeList4.Clear();
+        }
+
+        private static void InitializeMachine()
+        {
+            Console.Clear();
+            Console.SetCursorPosition(0, 16);
+            Console.WriteLine("Press SPACE to abort and return to main menu");
+            menuLoop = false;
+            isRunning = true;
         }
 
         private static void OptionsMenu()
@@ -129,11 +257,54 @@ namespace Turing_Emulator
         
         private static void ChooseFile()
         {
+            bool changePathLoop = true;
+            while (changePathLoop)
+            {
+                Console.Clear();
+                Console.WriteLine("Choose a file number to change path:");
+                Console.WriteLine("1 - First file (" + firstPath + ")");
+                Console.WriteLine("2 - Second file (" + secondPath + ")");
+                Console.WriteLine("3 - Third file (" + thirdPath + ")");
+                Console.WriteLine("4 - Fourth file (" + fourthPath + ")");
+                Console.WriteLine("5 - Back");
+
+                char item = Console.ReadKey().KeyChar;
+
+                if (item == '1')
+                {
+                    ChangeFilePath(1);
+                    changePathLoop = false;
+                }
+                else if (item == '2')
+                {
+                    ChangeFilePath(2);
+                    changePathLoop = false;
+                }
+                else if (item == '3')
+                {
+                    ChangeFilePath(2);
+                    changePathLoop = false;
+                }
+                else if (item == '4')
+                {
+                    ChangeFilePath(2);
+                    changePathLoop = false;
+                }
+                else if (item == '5') changePathLoop = false;
+                else continue;
+            }
+        }
+
+        private static void ChangeFilePath(int fileNumber)
+        {
             Console.Clear();
-            Console.WriteLine("Currently you cannot change the default file locations and names, which are:");
-            // TODO!
-            Console.WriteLine("Press any key to return.");
-            Console.ReadKey();
+            Console.WriteLine("Enter new file path and press ENTER:");
+            string path = Console.ReadLine();
+
+            if (fileNumber == 1) firstPath = path;
+            else if (fileNumber == 2) secondPath = path;
+            else if (fileNumber == 3) thirdPath = path;
+            else fourthPath = path;
         }
 
         private static void ChangeSimultionSpeed()
@@ -248,6 +419,7 @@ namespace Turing_Emulator
                 {
                     Console.WriteLine("No instruction found for state " + currentPosition + " and symbol " + currentTape[currentPosition] + ". Simulation halted.");
                     test.ReleaseMutex();
+                    if (mode == 1) Console.ReadKey();
                     break;
                 }
                 else
@@ -256,19 +428,11 @@ namespace Turing_Emulator
                     Console.WriteLine(currentTape);
                 }
 
-                if (simulationSpeed == 0) Console.ReadKey();
-                else Thread.Sleep(TimeSpan.FromMilliseconds(simulationSpeed));
+                if (simulationSpeed > 0) Thread.Sleep(TimeSpan.FromMilliseconds(simulationSpeed));
 
                 test.ReleaseMutex();
 
             }
-
-            /*if(isRunning != false)
-            {
-                Console.WriteLine("Press any key to return to main menu.");
-                Console.ReadKey();
-            }*/
-
             menuLoop = true;
         }
 
@@ -313,7 +477,7 @@ namespace Turing_Emulator
                     // Splitting the line into arguments and checking if line is valid
                     string[] words = line.Split(" ");
 
-                    if (words.Length != EXPECTED_ARGUMENT_COUNT)
+                    if (words.Length < EXPECTED_ARGUMENT_COUNT)
                     {
                         Console.WriteLine("Syntax error at line " + lineNumber + ". Invalid argument number.");
                         return false;
